@@ -1,0 +1,39 @@
+services:
+  backend:
+    container_name: django_backend
+    command: "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    build:
+      context: './backend'
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./db.env
+    networks:
+      - db_connection
+    
+  frontend:
+    container_name: nextjs_frontend
+    command: "npm run dev"
+    build:
+      context: './frontend'
+    expose:
+      - 3000
+    ports: 
+      - "3000:3000"
+
+  db:
+    container_name: "postgres_database"
+    image: "postgres:17.6"
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./db.env
+    networks:
+      - db_connection
+
+networks:
+  db_connection:
